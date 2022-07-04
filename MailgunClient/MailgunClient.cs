@@ -7,12 +7,12 @@ using System.Text.Json;
 namespace Mailgun
 {
     public class MailgunClient : MailClientBase<Models.Options>
-    {        
-        private readonly HttpClient _httpClient;        
+    {
+        private readonly HttpClient _httpClient;
 
         public MailgunClient(HttpClient httpClient, ILogger<MailgunClient> logger, IOptions<Models.Options> options) : base(logger, options)
         {
-            _httpClient = httpClient;            
+            _httpClient = httpClient;
         }
 
         protected override async Task<string> SendImplementationAsync(Message message)
