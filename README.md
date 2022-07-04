@@ -8,4 +8,4 @@ I started with a base abstract class [MailClientBase](https://github.com/adamfon
 These will be offered as NuGet packages when I have the basics all working.
 
 ## Html Email
-Html email rendering is a related, but separate concern from this. I have a different project [RazorToString](https://github.com/adamfoneil/RazorToString) that addresses this specifically.
+Html email rendering is a related but separate concern from this. I have a different project [RazorToString](https://github.com/adamfoneil/RazorToString) that addresses this specifically.
