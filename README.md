@@ -10,10 +10,10 @@ These will be offered as NuGet packages when I have the basics all working.
 ## In a Nutshell
 All mail clients inherit from [MailClientBase\<TOptions\>](https://github.com/adamfoneil/MailClient/blob/master/MailClient.Base/MailClientBase.cs#L7). Use `TOptions` to define the settings required for that client. Examples: [Mailgun Options](https://github.com/adamfoneil/MailClient/blob/master/MailgunClient/Models/Options.cs), [Smtp2Go Options](https://github.com/adamfoneil/MailClient/blob/master/Smtp2GoClient/Models/Options.cs).
 
-Override the abstract method [SendImplementationAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClient.Base/MailClientBase.cs#L52) and you'll have a working mail client.
+For the two email providers in this repo I'm implementing, I overrode the abstract method [SendImplementationAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClient.Base/MailClientBase.cs#L52).
 
-There are some optional overrides:
-- If you want to allow replies to your messages, override [GetReplyToAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClient.Base/MailClientBase.cs#L18).
+If you want to take advantage of some optional functionality, you'll need to create your own subclass of `MailgunClient` or `Smtp2GoClient`. These are the optional overrides:
+- If you want to allow replies to your messages, override [GetReplyToAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClient.Base/MailClientBase.cs#L18). By default, replies are not allowed.
 - If you want logging behavior specific to your application, override [LogMessageAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClient.Base/MailClientBase.cs#L22). Both Mailgun and Smtp2Go log send activity automatically, but you may want to capture outgoing messages in a database table, for example. That's what this is for.
 
 ## Safe Local and QA Testing
@@ -21,7 +21,7 @@ A common requirement with email is you want to make sure QA and local dev enviro
 
 `SendMode` has 3 options: 
 - `LogOnly` disables all sending, suitable for local dev testing
-- `Filter` allows conditional sending. You would override [MailClientBase.FilterMessageAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClient.Base/MailClientBase.cs#L20) to control whether a message sends. You could use this to check for a certain domain, block or allow specific recipients, and so on. Suitable for QA environments or local dev testing.
+- `Filter` allows conditional sending. You would override [MailClientBase.FilterMessageAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClient.Base/MailClientBase.cs#L20) to control whether a message sends. You could use this to check for a certain domain, block or allow specific recipients, and so on. Suitable for QA environments or local dev testing. By default, all messages are rejected, so you'll need to override this if you use the `Filter` send mode.
 - `SendAll` sends everything, intended as the production setting
 
 When you send a message, the `SendMode` is checked within method [ShouldSendAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClient.Base/MailClientBase.cs#L70).
