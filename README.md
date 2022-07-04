@@ -20,7 +20,7 @@ If you want to take advantage of some optional functionality, you'll need to cre
 A common requirement with email is you want to make sure QA and local dev environments don't send to production recipients. One reason for this library is that I wanted a definitive solution for this that works with any email provider. I approached this by having a common configuration property [OptionsBase.SendMode](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/Models/OptionsBase.cs#L21). All mail client implementations must base their `TOptions` class on `OptionsBase`, so they will inherit the `SendMode` property.
 
 `SendMode` has 3 options: 
-- `LogOnly` disables all sending, suitable for local dev testing
+- `LogOnly` disables all sending, suitable for local dev testing. In this scenario, you'd override `LogMessageAsync` to capture what *would* be sent in production. This can still be useful in production (not merely for development) if you want to capture outgoing emails in a database table, for example.
 - `Filter` allows conditional sending. You would override [MailClientBase.FilterMessageAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L20) to control whether a message sends. You could use this to check for a certain domain, block or allow specific recipients, and so on. Suitable for QA environments or local dev testing. By default, all messages are rejected, so you'll need to override this if you use the `Filter` send mode.
 - `SendAll` sends everything, intended as the production setting
 
