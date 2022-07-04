@@ -2,18 +2,21 @@ using MailClientBase.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Smtp2Go;
 
 namespace Smtp2GoTest
 {
     [TestClass]
     public class Integration
     {
+        /// <summary>
+        /// waiting for help from Smtp2Go ticket #211689 
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task Smtp2GoSampleEmail()
         {
-            using var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
-            //using var httpClient = new HttpClient();
+            //using var httpClient = new HttpClient(new LoggingHandler());
+            using var httpClient = new HttpClient();
 
             var options = new Smtp2Go.Models.Options();
             Config.GetSection("Smtp2Go").Bind(options);
@@ -42,7 +45,7 @@ namespace Smtp2GoTest
         /// </summary>
         class LoggingHandler : DelegatingHandler
         {
-            public LoggingHandler(HttpMessageHandler handler) : base(handler)
+            public LoggingHandler() : base(new HttpClientHandler())
             {
             }
 
