@@ -12,7 +12,8 @@ namespace Smtp2GoTest
         [TestMethod]
         public async Task Smtp2GoSampleEmail()
         {
-            using var httpClient = new HttpClient();
+            using var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
+            //using var httpClient = new HttpClient();
 
             var options = new Smtp2Go.Models.Options();
             Config.GetSection("Smtp2Go").Bind(options);
@@ -35,5 +36,26 @@ namespace Smtp2GoTest
         private IConfiguration Config => new ConfigurationBuilder()
             .AddUserSecrets("3fcdd101-0e8a-46dd-b499-8e4f40823c01")
             .Build();
+
+        /// <summary>
+        /// help from https://stackoverflow.com/a/18925296/2023653
+        /// </summary>
+        class LoggingHandler : DelegatingHandler
+        {
+            public LoggingHandler(HttpMessageHandler handler) : base(handler)
+            {
+            }
+
+            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                Console.WriteLine(request.ToString());
+                if (request.Content != null)
+                {
+                    Console.WriteLine(await request.Content.ReadAsStringAsync());
+                }
+
+                return await base.SendAsync(request, cancellationToken);
+            }
+        }
     }
 }

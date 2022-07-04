@@ -31,7 +31,7 @@ namespace Smtp2Go
                 HtmlBody = message.HtmlBody
             };
 
-            //var json = JsonSerializer.Serialize(send);
+            var json = JsonSerializer.Serialize(send);
 
             var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", send);
             
