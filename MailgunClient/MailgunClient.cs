@@ -38,10 +38,15 @@ namespace Mailgun
 
             var url = $"{_options.Url}/{_options.Domain}/messages";
             var response = await _httpClient.PostAsync(url, content);
-            response.EnsureSuccessStatusCode();
-            var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
 
-            return doc?.RootElement.GetProperty("id").GetString() ?? throw new Exception("Mailgun result did not include an expected message Id");
+            if (response.IsSuccessStatusCode)
+            {
+                var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                return doc?.RootElement.GetProperty("id").GetString() ?? throw new Exception("Mailgun result did not include an expected message Id");
+            }
+
+            var errorMessage = await LogSendErrorAsync(response, message);
+            throw new Exception(errorMessage);
         }
     }
 }

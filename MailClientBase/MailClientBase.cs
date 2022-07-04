@@ -6,7 +6,7 @@ namespace MailSender
 {
     public abstract class MailClientBase<TOptions> where TOptions : OptionsBase
     {
-        private readonly ILogger _logger;
+        protected readonly ILogger _logger;
         protected readonly TOptions _options;
 
         public MailClientBase(ILogger logger, IOptions<TOptions> options)
@@ -79,6 +79,13 @@ namespace MailSender
             }
 
             return true;
+        }
+
+        protected async Task<string> LogSendErrorAsync(HttpResponseMessage response, Message message)
+        {
+            var errorMessage = "Email failed to send: " + (await response.Content.ReadAsStringAsync());
+            _logger.LogError(errorMessage + " message object: {@message}", message);
+            return errorMessage;
         }
     }
 }

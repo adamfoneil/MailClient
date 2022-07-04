@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\MailClient.Base\MailClientBase.cs" Link="Shared\MailClientBase.cs" />
-    <Compile Include="..\MailClient.Base\Models\Message.cs" Link="Shared\Models\Message.cs" />
-    <Compile Include="..\MailClient.Base\Models\OptionsBase.cs" Link="Shared\Models\OptionsBase.cs" />
+    <Compile Include="..\MailClientBase\MailClientBase.cs" Link="Shared\MailClientBase.cs" />
+    <Compile Include="..\MailClientBase\Models\Message.cs" Link="Shared\Models\Message.cs" />
+    <Compile Include="..\MailClientBase\Models\OptionsBase.cs" Link="Shared\Models\OptionsBase.cs" />
   </ItemGroup>
 
   <ItemGroup>
