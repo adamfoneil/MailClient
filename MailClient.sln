@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smtp2GoClient", "Smtp2GoCli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailClientBase", "MailClientBase\MailClientBase.csproj", "{D0AEB805-C908-4446-9B3D-1C7365C31389}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{335634B6-BE64-4D31-9690-F4C04021697D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D0AEB805-C908-4446-9B3D-1C7365C31389}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0AEB805-C908-4446-9B3D-1C7365C31389}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0AEB805-C908-4446-9B3D-1C7365C31389}.Release|Any CPU.Build.0 = Release|Any CPU
+		{335634B6-BE64-4D31-9690-F4C04021697D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{335634B6-BE64-4D31-9690-F4C04021697D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{335634B6-BE64-4D31-9690-F4C04021697D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{335634B6-BE64-4D31-9690-F4C04021697D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

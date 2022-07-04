@@ -2,6 +2,8 @@
 using MailSender;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 
 namespace Mailgun
@@ -13,6 +15,8 @@ namespace Mailgun
         public MailgunClient(HttpClient httpClient, ILogger<MailgunClient> logger, IOptions<Models.Options> options) : base(logger, options)
         {
             _httpClient = httpClient;
+            var encoded = Convert.ToBase64String(Encoding.ASCII.GetBytes($"api:{_options.ApiKey}"));
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", encoded);
         }
 
         protected override async Task<string> SendImplementationAsync(Message message)
