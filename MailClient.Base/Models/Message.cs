@@ -1,6 +1,6 @@
-﻿namespace MailgunClient.Package.Models
+﻿namespace MailClientBase.Models
 {
-    public class MailgunMessage
+    public class Message
     {
         public string? Recipient { get; set; }
         public string? Subject { get; set; }
