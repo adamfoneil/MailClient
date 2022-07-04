@@ -14,7 +14,7 @@ namespace Smtp2Go
 
         public Smtp2GoClient(HttpClient httpClient, ILogger<Smtp2GoClient> logger, IOptions<Models.Options> options) : base(logger, options)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClient;            
         }
 
         protected override async Task<string> SendImplementationAsync(Message message)
@@ -31,9 +31,9 @@ namespace Smtp2Go
                 HtmlBody = message.HtmlBody
             };
 
-            var json = JsonSerializer.Serialize(send);
-
-            var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", send);
+            var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", send);  
+            //var content = JsonContent.Create(send);
+            //var response = await _httpClient.PostAsync(_options.BaseUrl + "/email/send", content, default);
             
             if (response.IsSuccessStatusCode)
             {
@@ -63,8 +63,10 @@ namespace Smtp2Go
             [JsonPropertyName("html_body")]
             public string? HtmlBody { get; set; }
             [JsonPropertyName("custom_headers")]
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public Dictionary<string, string>? CustomHeaders { get; set; }
             [JsonPropertyName("attachments")]
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public IEnumerable<Attachment>? Attachments { get; set; }
         }
 
