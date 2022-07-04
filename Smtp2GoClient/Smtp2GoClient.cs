@@ -6,7 +6,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Smtp2GoClient
+namespace Smtp2Go
 {
     public class Smtp2GoClient : MailClientBase<Models.Options>
     {
@@ -31,7 +31,9 @@ namespace Smtp2GoClient
                 HtmlBody = message.HtmlBody
             };
 
-            var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl, send);
+            //var json = JsonSerializer.Serialize(send);
+
+            var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", send);
             
             if (response.IsSuccessStatusCode)
             {

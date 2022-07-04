@@ -2,12 +2,11 @@ using MailClientBase.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Testing.Clients;
 
-namespace Testing
+namespace MailgunTest
 {
     [TestClass]
-    public class MailClients
+    public class Integration
     {
         [TestMethod]
         public async Task MailgunSampleEmail()
@@ -24,7 +23,7 @@ namespace Testing
             var messageId = await client.SendAsync(new Message()
             {
                 Recipient = "adamosoftware@gmail.com",
-                Subject = "Test Message",
+                Subject = "Test from Mailgun",
                 TextBody = "This is a test only.",
                 HtmlBody = "<p>This is a test only.<p>"
             });

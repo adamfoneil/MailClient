@@ -3,7 +3,7 @@ using Mailgun;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Testing.Clients
+namespace MailgunTest
 {
     public class MailgunSample : MailgunClient
     {
@@ -15,6 +15,6 @@ namespace Testing.Clients
         {
             var result = message.Recipient?.Equals("adamosoftware@gmail.com") ?? throw new Exception("Recipient is required");
             return await Task.FromResult(result);
-        }        
+        }
     }
 }

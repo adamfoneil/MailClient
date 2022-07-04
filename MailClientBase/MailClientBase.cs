@@ -1,6 +1,7 @@
 ﻿using MailClientBase.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace MailSender
 {
@@ -84,7 +85,8 @@ namespace MailSender
         protected async Task<string> LogSendErrorAsync(HttpResponseMessage response, Message message)
         {
             var errorMessage = "Email failed to send: " + (await response.Content.ReadAsStringAsync());
-            _logger.LogError(errorMessage + " message object: {@message}", message);
+            var messageJson = JsonSerializer.Serialize(message);
+            _logger.LogError(errorMessage + " message object: {messageJson}", messageJson);
             return errorMessage;
         }
     }
