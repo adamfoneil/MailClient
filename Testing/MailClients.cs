@@ -21,13 +21,15 @@ namespace Testing
 
             var client = new MailgunSample(httpClient, logger, Options.Create(options));
 
-            await client.SendAsync(new Message()
+            var messageId = await client.SendAsync(new Message()
             {
                 Recipient = "adamosoftware@gmail.com",
                 Subject = "Test Message",
                 TextBody = "This is a test only.",
                 HtmlBody = "<p>This is a test only.<p>"
             });
+
+            Assert.IsTrue(!string.IsNullOrEmpty(messageId));
         }
 
         private IConfiguration Config => new ConfigurationBuilder()
