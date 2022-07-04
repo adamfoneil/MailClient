@@ -41,7 +41,7 @@ namespace Mailgun
 
             if (response.IsSuccessStatusCode)
             {
-                var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
                 return doc?.RootElement.GetProperty("id").GetString() ?? throw new Exception("Mailgun result did not include an expected message Id");
             }
 

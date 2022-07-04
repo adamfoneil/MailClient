@@ -3,6 +3,7 @@ using MailSender;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Smtp2GoClient
@@ -34,7 +35,9 @@ namespace Smtp2GoClient
             
             if (response.IsSuccessStatusCode)
             {
-
+                using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                // adapted from https://apidoc.smtp2go.com/documentation/?_ga=2.43864229.1814788429.1656899456-2091240974.1656899456#/POST%20/email/send
+                return doc?.RootElement.GetProperty("data").GetProperty("email_id").GetString() ?? throw new Exception("Smtp2GoClient API response did not include an expected email_id");
             }
 
             var errorMessage = await LogSendErrorAsync(response, message);
