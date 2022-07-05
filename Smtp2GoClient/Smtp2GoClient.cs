@@ -21,7 +21,7 @@ namespace Smtp2Go
         {
             var replyTo = await GetReplyToAsync(message);
 
-            var send = new SendModel()
+            var envelope = new Envelope()
             {
                 ApiKey = _options.ApiKey,
                 Recipients = new[] { new Recipient() { Email = message.Recipient } },
@@ -31,10 +31,25 @@ namespace Smtp2Go
                 HtmlBody = message.HtmlBody
             };
 
-            var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", send);  
+            //var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", send);  
+            var response = await _httpClient.SendAsync(new HttpRequestMessage()
+            {
+                RequestUri = new Uri(_options.BaseUrl + "/email/send"),
+                Method = HttpMethod.Post,
+                Content = JsonContent.Create(envelope, options: new JsonSerializerOptions()
+                {
+                    WriteIndented = true
+                })
+            });
+
             //var content = JsonContent.Create(send);
             //var response = await _httpClient.PostAsync(_options.BaseUrl + "/email/send", content, default);
-            
+
+            var json = JsonSerializer.Serialize(envelope, options: new JsonSerializerOptions()
+            {
+                WriteIndented = true
+            });
+
             if (response.IsSuccessStatusCode)
             {
                 using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
@@ -46,7 +61,7 @@ namespace Smtp2Go
             throw new Exception(errorMessage);
         }
 
-        private class SendModel
+        private class Envelope
         {
             [JsonPropertyName("api_key")]
             public string? ApiKey { get; set; }

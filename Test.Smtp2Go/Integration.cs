@@ -1,5 +1,6 @@
 using MailClientBase.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -8,6 +9,10 @@ namespace Smtp2GoTest
     [TestClass]
     public class Integration
     {
+        private static IServiceProvider Services => new ServiceCollection()
+            .AddHttpClient()
+            .BuildServiceProvider();
+
         /// <summary>
         /// waiting for help from Smtp2Go ticket #211689 
         /// </summary>
@@ -16,7 +21,7 @@ namespace Smtp2GoTest
         public async Task Smtp2GoSampleEmail()
         {
             //using var httpClient = new HttpClient(new LoggingHandler());
-            using var httpClient = new HttpClient();
+            var httpClient = Services.GetRequiredService<IHttpClientFactory>().CreateClient();
 
             var options = new Smtp2Go.Models.Options();
             Config.GetSection("Smtp2Go").Bind(options);
