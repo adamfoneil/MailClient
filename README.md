@@ -24,7 +24,7 @@ A common requirement with email is you want to make sure QA and local dev enviro
 - `Filter` allows conditional sending. You would override [MailClientBase.FilterMessageAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L20) to control whether a message sends. You could use this to check for a certain domain, block or allow specific recipients, and so on. Suitable for QA environments or local dev testing. By default, all messages are rejected, so you'll need to override this if you use the `Filter` send mode.
 - `SendAll` sends everything, intended as the production setting
 
-When you send a message, the `SendMode` is checked within method [ShouldSendAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L70).
+When you send a message, the `SendMode` is checked within method [ShouldSendAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L71).
 
 ## Html Email
 Html email rendering is a related but separate concern from this. I have a different project [RazorToString](https://github.com/adamfoneil/RazorToString) that addresses this specifically.
