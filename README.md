@@ -21,7 +21,7 @@ A common requirement with email is you want to make sure QA and local dev enviro
 
 `SendMode` has 3 options: 
 - `LogOnly` disables all sending, suitable for local dev testing. In this scenario, you'd override `LogMessageAsync` to capture what *would* be sent in production. This can still be useful in production (not merely for development) if you want to capture outgoing emails in a database table, for example.
-- `Filter` allows conditional sending. You would override [MailClientBase.FilterMessageAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L20) to control whether a message sends. You could use this to check for a certain domain, block or allow specific recipients, and so on. Suitable for QA environments or local dev testing. By default, all messages are rejected, so you'll need to override this if you use the `Filter` send mode.
+- `Filter` allows conditional sending. You would override [MailClientBase.FilterMessageAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L21) to control whether a message sends. You could use this to check for a certain domain, block or allow specific recipients, and so on. Suitable for QA environments or local dev testing. By default, all messages are rejected, so you'll need to override this if you use the `Filter` send mode.
 - `SendAll` sends everything, intended as the production setting
 
 When you send a message, the `SendMode` is checked within method [ShouldSendAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L71).
