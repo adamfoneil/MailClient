@@ -26,7 +26,11 @@ namespace Smtp2GoTest
             var options = new Smtp2Go.Models.Options();
             Config.GetSection("Smtp2Go").Bind(options);
 
-            var logger = LoggerFactory.Create(config => config.AddConsole()).CreateLogger<Smtp2GoSample>();
+            var logger = LoggerFactory.Create(config => 
+            { 
+                config.AddDebug();
+                config.SetMinimumLevel(LogLevel.Debug);
+            }).CreateLogger<Smtp2GoSample>();
 
             var client = new Smtp2GoSample(httpClient, logger, Options.Create(options));
 

@@ -31,8 +31,26 @@ namespace Smtp2Go
                 HtmlBody = message.HtmlBody
             };
 
-            //var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", send);  
-            var response = await _httpClient.SendAsync(new HttpRequestMessage()
+            /*var msg = new
+            {
+                api_key = _options.ApiKey,
+                sender = (replyTo.AllowReplies) ? replyTo.Recipient : _options.Sender,
+                to = new[] { message.Recipient },
+                subject = message.Subject,
+                html_body = message.HtmlBody,
+                text_body = message.TextBody
+            };
+
+            var json = JsonSerializer.Serialize(msg, new JsonSerializerOptions()
+            {
+                WriteIndented = true
+            });
+            _logger.LogDebug(json);
+            */
+
+            var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", envelope);  
+            
+            /*var response = await _httpClient.SendAsync(new HttpRequestMessage()
             {
                 RequestUri = new Uri(_options.BaseUrl + "/email/send"),
                 Method = HttpMethod.Post,
@@ -40,15 +58,10 @@ namespace Smtp2Go
                 {
                     WriteIndented = true
                 })
-            });
+            });*/
 
             //var content = JsonContent.Create(send);
             //var response = await _httpClient.PostAsync(_options.BaseUrl + "/email/send", content, default);
-
-            var json = JsonSerializer.Serialize(envelope, options: new JsonSerializerOptions()
-            {
-                WriteIndented = true
-            });
 
             if (response.IsSuccessStatusCode)
             {

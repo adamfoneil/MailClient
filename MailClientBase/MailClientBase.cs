@@ -84,8 +84,16 @@ namespace MailSender
 
         protected async Task<string> LogSendErrorAsync(HttpResponseMessage response, Message message)
         {
-            var errorMessage = "Email failed to send: " + (await response.Content.ReadAsStringAsync());            
+            var msgJson = JsonSerializer.Serialize(message, new JsonSerializerOptions()
+            {
+                WriteIndented = true
+            });
+
+            _logger.LogDebug("{message}", msgJson);
+
+            var errorMessage = "Email failed to send: " + (await response.Content.ReadAsStringAsync());
             _logger.LogError(errorMessage);
+
             return errorMessage;
         }
     }
