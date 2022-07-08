@@ -47,29 +47,6 @@ namespace Smtp2Go
             return JsonSerializer.Serialize(envelope, options: SerializerOptions);
         }
 
-        private static Envelope2 BuildEnvelope2(Message message, Models.Options options, bool allowReplies, string recipient)
-        {
-            var result = new Envelope2()
-            {
-                api_key = options.ApiKey,
-                sender = options.Sender,
-                to = new string[] { message.Recipient },
-                subject = message.Subject,
-                html_body = message.HtmlBody,
-                text_body = message.TextBody
-            };
-
-            if (allowReplies)
-            {
-                result.custom_headers = new[]
-                {
-                    new Envelope2.CustomHeader() { header = "Reply-To", value = recipient }
-                };                
-            }
-
-            return result;
-        }
-
         private static Envelope BuildEnvelope(Message message, Models.Options options, bool allowReplies, string recipient)
         {
             var envelope = new Envelope()
@@ -139,6 +116,29 @@ namespace Smtp2Go
                 public string header { get; set; }
                 public string value { get; set; }
             }
+        }
+
+        private static Envelope2 BuildEnvelope2(Message message, Models.Options options, bool allowReplies, string recipient)
+        {
+            var result = new Envelope2()
+            {
+                api_key = options.ApiKey,
+                sender = options.Sender,
+                to = new string[] { message.Recipient },
+                subject = message.Subject,
+                html_body = message.HtmlBody,
+                text_body = message.TextBody
+            };
+
+            if (allowReplies)
+            {
+                result.custom_headers = new[]
+                {
+                    new Envelope2.CustomHeader() { header = "Reply-To", value = recipient }
+                };
+            }
+
+            return result;
         }
 
         private class Recipient
