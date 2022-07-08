@@ -18,18 +18,22 @@ namespace Smtp2Go
         }
 
         protected override async Task<string> SendImplementationAsync(Message message)
-        {
-            var replyTo = await GetReplyToAsync(message);
-
+        {           
             var envelope = new Envelope()
             {
                 ApiKey = _options.ApiKey,
                 Recipients = new[] { new Recipient() { Email = message.Recipient } },
                 Subject = message.Subject,
-                Sender = (replyTo.AllowReplies) ? replyTo.Recipient : _options.Sender,
+                Sender = _options.Sender,
                 TextBody = message.TextBody,
                 HtmlBody = message.HtmlBody
             };
+
+            var replyTo = await GetReplyToAsync(message);
+            if (replyTo.AllowReplies)
+            {
+                envelope.CustomHeaders.Add("Reply-To", replyTo.Recipient);
+            }
 
             /*var msg = new
             {
@@ -47,6 +51,8 @@ namespace Smtp2Go
             });
             _logger.LogDebug(json);
             */
+
+            var json = JsonSerializer.Serialize(envelope);
 
             var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", envelope);  
             
@@ -90,9 +96,9 @@ namespace Smtp2Go
             public string? TextBody { get; set; }
             [JsonPropertyName("html_body")]
             public string? HtmlBody { get; set; }
-            [JsonPropertyName("custom_headers")]
-            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-            public Dictionary<string, string>? CustomHeaders { get; set; }
+            [JsonPropertyName("custom_headers")]            
+            [JsonConverter(typeof(HeaderConverter))]
+            public Dictionary<string, string> CustomHeaders { get; set; } = new Dictionary<string, string>();
             [JsonPropertyName("attachments")]
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public IEnumerable<Attachment>? Attachments { get; set; }
