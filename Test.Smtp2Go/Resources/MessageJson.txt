@@ -6,7 +6,7 @@
   "sender": "test@nowhere.org",
   "subject": "this new message",
   "text_body": "This is a test only",
-  "html_body": "\u003Cp\u003EThis is a test only\u003C/p\u003E",
+  "html_body": "<p>This is a test only</p>",
   "custom_headers": [
     {
       "header": "Reply-To",

@@ -3,6 +3,7 @@ using MailSender;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -20,14 +21,9 @@ namespace Smtp2Go
         protected override async Task<string> SendImplementationAsync(Message message)
         {
             var (allowReplies, recipient) = await GetReplyToAsync(message);
-            var json = SerializeMessage(message, _options, allowReplies, recipient);
+            var env = BuildEnvelope(message, _options, allowReplies, recipient);
 
-            var response = await _httpClient.SendAsync(new HttpRequestMessage()
-            {
-                RequestUri = new Uri(_options.BaseUrl + "/email/send"),
-                Method = HttpMethod.Post,
-                Content = JsonContent.Create(json)
-            });
+            var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", env, SerializerOptions);
 
             if (response.IsSuccessStatusCode)
             {
@@ -42,9 +38,16 @@ namespace Smtp2Go
 
         /// <summary>
         /// extracting this method for test purposes to deal with 
-        /// spurious model validation error coming from Smtp2Go        
+        /// inexplicable model validation error coming from Smtp2Go        
         /// </summary>
         public static string SerializeMessage(Message message, Models.Options options, bool allowReplies, string recipient)
+        {
+            var envelope = BuildEnvelope(message, options, allowReplies, recipient);
+            
+            return JsonSerializer.Serialize(envelope, options: SerializerOptions);
+        }
+
+        private static Envelope BuildEnvelope(Message message, Models.Options options, bool allowReplies, string recipient)
         {
             var envelope = new Envelope()
             {
@@ -55,17 +58,20 @@ namespace Smtp2Go
                 TextBody = message.TextBody,
                 HtmlBody = message.HtmlBody
             };
-            
+
             if (allowReplies)
             {
                 envelope.CustomHeaders.Add("Reply-To", recipient);
             }
 
-            return JsonSerializer.Serialize(envelope, new JsonSerializerOptions()
-            {
-                WriteIndented = true
-            });
+            return envelope;
         }
+
+        private static JsonSerializerOptions SerializerOptions => new()
+        {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, // to allow inline html in HtmlBody
+            WriteIndented = true
+        };
 
         private class Envelope
         {
