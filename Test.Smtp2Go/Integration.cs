@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Smtp2Go;
+using System.Reflection;
 
 namespace Smtp2GoTest
 {
@@ -43,6 +45,32 @@ namespace Smtp2GoTest
             });
 
             Assert.IsTrue(!string.IsNullOrEmpty(messageId));
+        }
+
+        [TestMethod]
+        public void MessageContent()
+        {
+            var actualResult = Smtp2GoClient.SerializeMessage(new Message()
+            {
+                Recipient = "adamosoftware@gmail.com",
+                Subject = "this new message",
+                TextBody = "This is a test only",
+                HtmlBody = "<p>This is a test only</p>"
+            }, new Smtp2Go.Models.Options()
+            {
+                ApiKey = "whatever-key",
+                Sender = "test@nowhere.org"
+            }, true, "reply-to@nowhere.org");
+
+            var expectedResult = GetResource("Resources.MessageJson.txt");
+            Assert.IsTrue(actualResult.Equals(expectedResult));
+        }
+
+        private string GetResource(string resourceName)
+        {
+            //var names = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Test.Smtp2Go.{resourceName}") ?? throw new Exception($"Resource {resourceName} not found");
+            return new StreamReader(stream).ReadToEnd();
         }
 
         private IConfiguration Config => new ConfigurationBuilder()

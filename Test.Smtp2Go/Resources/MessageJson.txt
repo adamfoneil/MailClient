@@ -1,0 +1,16 @@
+﻿{
+  "api_key": "whatever-key",
+  "to": [
+    "adamosoftware@gmail.com"
+  ],
+  "sender": "test@nowhere.org",
+  "subject": "this new message",
+  "text_body": "This is a test only",
+  "html_body": "\u003Cp\u003EThis is a test only\u003C/p\u003E",
+  "custom_headers": [
+    {
+      "header": "Reply-To",
+      "value": "reply-to@nowhere.org"
+    }
+  ]
+}

@@ -18,56 +18,16 @@ namespace Smtp2Go
         }
 
         protected override async Task<string> SendImplementationAsync(Message message)
-        {           
-            var envelope = new Envelope()
-            {
-                ApiKey = _options.ApiKey,
-                Recipients = new[] { new Recipient() { Email = message.Recipient } },
-                Subject = message.Subject,
-                Sender = _options.Sender,
-                TextBody = message.TextBody,
-                HtmlBody = message.HtmlBody
-            };
+        {
+            var (allowReplies, recipient) = await GetReplyToAsync(message);
+            var json = SerializeMessage(message, _options, allowReplies, recipient);
 
-            var replyTo = await GetReplyToAsync(message);
-            if (replyTo.AllowReplies)
-            {
-                envelope.CustomHeaders.Add("Reply-To", replyTo.Recipient);
-            }
-
-            /*var msg = new
-            {
-                api_key = _options.ApiKey,
-                sender = (replyTo.AllowReplies) ? replyTo.Recipient : _options.Sender,
-                to = new[] { message.Recipient },
-                subject = message.Subject,
-                html_body = message.HtmlBody,
-                text_body = message.TextBody
-            };
-
-            var json = JsonSerializer.Serialize(msg, new JsonSerializerOptions()
-            {
-                WriteIndented = true
-            });
-            _logger.LogDebug(json);
-            */
-
-            var json = JsonSerializer.Serialize(envelope);
-
-            var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", envelope);  
-            
-            /*var response = await _httpClient.SendAsync(new HttpRequestMessage()
+            var response = await _httpClient.SendAsync(new HttpRequestMessage()
             {
                 RequestUri = new Uri(_options.BaseUrl + "/email/send"),
                 Method = HttpMethod.Post,
-                Content = JsonContent.Create(envelope, options: new JsonSerializerOptions()
-                {
-                    WriteIndented = true
-                })
-            });*/
-
-            //var content = JsonContent.Create(send);
-            //var response = await _httpClient.PostAsync(_options.BaseUrl + "/email/send", content, default);
+                Content = JsonContent.Create(json)
+            });
 
             if (response.IsSuccessStatusCode)
             {
@@ -78,6 +38,33 @@ namespace Smtp2Go
 
             var errorMessage = await LogSendErrorAsync(response, message);
             throw new Exception(errorMessage);
+        }
+
+        /// <summary>
+        /// extracting this method for test purposes to deal with 
+        /// spurious model validation error coming from Smtp2Go        
+        /// </summary>
+        public static string SerializeMessage(Message message, Models.Options options, bool allowReplies, string recipient)
+        {
+            var envelope = new Envelope()
+            {
+                ApiKey = options.ApiKey,
+                Recipients = new[] { new Recipient() { Email = message.Recipient } },
+                Subject = message.Subject,
+                Sender = options.Sender,
+                TextBody = message.TextBody,
+                HtmlBody = message.HtmlBody
+            };
+            
+            if (allowReplies)
+            {
+                envelope.CustomHeaders.Add("Reply-To", recipient);
+            }
+
+            return JsonSerializer.Serialize(envelope, new JsonSerializerOptions()
+            {
+                WriteIndented = true
+            });
         }
 
         private class Envelope
