@@ -51,7 +51,7 @@ namespace Smtp2GoTest
         /// The Smtp2Go API is returning an error
         /// E_ApiResponseCodes.NON_VALIDATING_IN_PAYLOAD", 
         /// "model_validation_errors": "Model Validation failed: Either 'text_body', 'html_body' or 'template_id' must be passed"
-        /// This test is here to prove that the text
+        /// This test is here to prove that the text is using snake-cased properties
         /// </summary>
         [TestMethod]
         public void MessageContent()
