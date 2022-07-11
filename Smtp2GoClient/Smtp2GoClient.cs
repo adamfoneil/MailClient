@@ -21,7 +21,9 @@ namespace Smtp2Go
         protected override async Task<string> SendImplementationAsync(Message message)
         {
             var (allowReplies, recipient) = await GetReplyToAsync(message);
-            var env = BuildEnvelope2(message, _options, allowReplies, recipient);
+            var env = BuildEnvelope(message, _options, allowReplies, recipient);
+
+            //var json = JsonSerializer.Serialize(env, SerializerOptions);
 
             var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", env, SerializerOptions);
 
