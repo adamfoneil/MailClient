@@ -3,6 +3,7 @@ using MailSender;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -23,9 +24,13 @@ namespace Smtp2Go
             var (allowReplies, recipient) = await GetReplyToAsync(message);
             var env = BuildEnvelope(message, _options, allowReplies, recipient);
 
-            //var json = JsonSerializer.Serialize(env, SerializerOptions);
+            //var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", env, SerializerOptions);
 
-            var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", env, SerializerOptions);
+            var json = JsonSerializer.Serialize(env, SerializerOptions);
+            
+            var response = await _httpClient.PostAsync(
+                new Uri(_options.BaseUrl + "/email/send"), 
+                new StringContent(json, Encoding.UTF8, "application/json"));
 
             if (response.IsSuccessStatusCode)
             {
@@ -97,50 +102,6 @@ namespace Smtp2Go
             [JsonPropertyName("attachments")]
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public IEnumerable<Attachment>? Attachments { get; set; }
-        }
-
-        /// <summary>
-        /// trying to see if there's a problem with [JsonProperyName] attributes
-        /// being ignore or something, but I'm still having the same behavior        
-        /// </summary>
-        private class Envelope2
-        {
-            public string api_key { get; set; }
-            public string[] to { get; set; }
-            public string sender { get; set; }
-            public string subject { get; set; }
-            public string text_body { get; set; }
-            public string html_body { get; set; }
-            public IEnumerable<CustomHeader> custom_headers { get; set; }
-
-            public class CustomHeader
-            {
-                public string header { get; set; }
-                public string value { get; set; }
-            }
-        }
-
-        private static Envelope2 BuildEnvelope2(Message message, Models.Options options, bool allowReplies, string recipient)
-        {
-            var result = new Envelope2()
-            {
-                api_key = options.ApiKey,
-                sender = options.Sender,
-                to = new string[] { message.Recipient },
-                subject = message.Subject,
-                html_body = message.HtmlBody,
-                text_body = message.TextBody
-            };
-
-            if (allowReplies)
-            {
-                result.custom_headers = new[]
-                {
-                    new Envelope2.CustomHeader() { header = "Reply-To", value = recipient }
-                };
-            }
-
-            return result;
         }
 
         private class Recipient
