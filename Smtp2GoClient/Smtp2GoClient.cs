@@ -24,6 +24,7 @@ namespace Smtp2Go
             var (allowReplies, recipient) = await GetReplyToAsync(message);
             var env = BuildEnvelope(message, _options, allowReplies, recipient);
 
+            // this sets the content-length to a value Smtp2Go doesn't like
             //var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", env, SerializerOptions);
 
             var json = JsonSerializer.Serialize(env, SerializerOptions);
