@@ -5,7 +5,7 @@ I started with a base abstract class [MailClientBase](https://github.com/adamfon
 - [Mailgun](https://github.com/adamfoneil/MailClient/blob/master/MailgunClient/MailgunClient.cs)
 - [Smtp2Go](https://github.com/adamfoneil/MailClient/blob/master/Smtp2GoClient/Smtp2GoClient.cs)
 
-I offer these as NuGet packages at my personal Azure [location](https://aosoftware.blob.core.windows.net/packages/index.json):
+I offer these as NuGet packages:
 - [AO.Mailgun](https://www.nuget.org/packages/AO.Mailgun)
 - [AO.Smtp2Go](https://www.nuget.org/packages/AO.Smtp2Go)
 
