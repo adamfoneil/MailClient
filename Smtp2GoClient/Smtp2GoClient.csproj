@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>AO.Smtp2Go</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Company>Adam O'Neil</Company>
     <Description>An Smtp2Go email API client</Description>
     <Copyright>Copyright (c) 2022 Adam O'Neil</Copyright>
@@ -14,6 +14,16 @@
     <RepositoryUrl>https://github.com/adamfoneil/MailClient</RepositoryUrl>
     <PackageTags>email; api-client</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Authors>Adam O'Neil</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +34,13 @@
 
   <ItemGroup>
     <Folder Include="Shared\Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
