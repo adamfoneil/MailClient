@@ -15,8 +15,8 @@ All mail clients inherit from [MailClientBase\<TOptions\>](https://github.com/ad
 For the two email providers in this repo I'm implementing, I overrode the abstract method [SendImplementationAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L52).
 
 If you want to take advantage of some optional functionality, you'll need to create your own subclass of `MailgunClient` or `Smtp2GoClient`. These are the optional overrides:
-- If you want to allow replies to your messages, override [GetReplyToAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L18). By default, replies are not allowed.
-- If you want logging behavior specific to your application, override [LogMessageAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L22). Both Mailgun and Smtp2Go log send activity automatically, but you may want to capture outgoing messages in a database table, for example. That's what this is for.
+- If you want to allow replies to your messages, override [GetReplyToAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L19). By default, replies are not allowed.
+- If you want logging behavior specific to your application, override [LogMessageAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L23). Both Mailgun and Smtp2Go log send activity automatically, but you may want to capture outgoing messages in a database table, for example. That's what this is for.
 
 ## Safe Local and QA Testing
 A common requirement with email is you want to make sure QA and local dev environments don't send to production recipients. One reason for this library is that I wanted a definitive solution for this that works with any email provider. I approached this by having a common configuration property [OptionsBase.SendMode](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/Models/OptionsBase.cs#L21). All mail client implementations must base their `TOptions` class on `OptionsBase`, so they will inherit the `SendMode` property.
