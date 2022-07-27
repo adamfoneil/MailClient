@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailClientBase", "MailClien
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Mailgun", "Test.Mailgun\Test.Mailgun.csproj", "{C89ECEE6-9FCF-4DEE-9587-B8A2C44858B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Smtp2Go", "Test.Smtp2Go\Test.Smtp2Go.csproj", "{6747F2E9-742E-467E-AF54-DE36A4EBFD35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Smtp2Go", "Test.Smtp2Go\Test.Smtp2Go.csproj", "{6747F2E9-742E-467E-AF54-DE36A4EBFD35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

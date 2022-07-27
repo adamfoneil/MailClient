@@ -2,7 +2,6 @@
 using MailSender;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -14,15 +13,15 @@ namespace Smtp2Go
     {
         private readonly HttpClient _httpClient;
 
-        public Smtp2GoClient(HttpClient httpClient, ILogger<Smtp2GoClient> logger, IOptions<Models.Options> options) : base(logger, options)
+        public Smtp2GoClient(IHttpClientFactory httpClientFactory, ILogger<Smtp2GoClient> logger, IOptions<Models.Options> options) : base(logger, options)
         {
-            _httpClient = httpClient;            
+            _httpClient = httpClientFactory.CreateClient();            
         }
 
         protected override async Task<string> SendImplementationAsync(Message message)
         {
             var (allowReplies, recipient) = await GetReplyToAsync(message);
-            var env = BuildEnvelope(message, _options, allowReplies, recipient);
+            var env = BuildEnvelope(message, Options, allowReplies, recipient);
 
             // this sets the content-length to a value Smtp2Go doesn't like
             //var response = await _httpClient.PostAsJsonAsync(_options.BaseUrl + "/email/send", env, SerializerOptions);
@@ -30,7 +29,7 @@ namespace Smtp2Go
             var json = JsonSerializer.Serialize(env, SerializerOptions);
             
             var response = await _httpClient.PostAsync(
-                new Uri(_options.BaseUrl + "/email/send"), 
+                new Uri(Options.BaseUrl + "/email/send"), 
                 new StringContent(json, Encoding.UTF8, "application/json"));
 
             if (response.IsSuccessStatusCode)

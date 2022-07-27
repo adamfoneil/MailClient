@@ -7,13 +7,16 @@ namespace MailSender
 {
     public abstract class MailClientBase<TOptions> where TOptions : OptionsBase
     {
-        protected readonly ILogger _logger;
-        protected readonly TOptions _options;
+        protected readonly ILogger Logger;
+        protected readonly TOptions Options;
 
         public MailClientBase(ILogger logger, IOptions<TOptions> options)
         {
-            _logger = logger;
-            _options = options.Value;
+            ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+            ArgumentNullException.ThrowIfNull(options, nameof(options));
+
+            Logger = logger;
+            Options = options.Value;
         }
 
         protected virtual async Task<(bool AllowReplies, string Recipient)> GetReplyToAsync(Message message) => await Task.FromResult((false, default(string)));
@@ -23,9 +26,9 @@ namespace MailSender
         protected virtual async Task LogMessageAsync(string messageId, Message message)
         {
             // for inspecting all outgoing content
-            _logger.LogDebug("{@logData}", new
+            Logger.LogDebug("{@logData}", new
             {
-                _options.SendMode,
+                Options.SendMode,
                 messageId,
                 message.Recipient,
                 message.Subject,
@@ -38,9 +41,9 @@ namespace MailSender
             });
 
             // for inspecting just the top level info (sender, recipient, subject)
-            _logger.LogInformation("{@logData}", new
+            Logger.LogInformation("{@logData}", new
             {
-                _options.SendMode,
+                Options.SendMode,
                 messageId,
                 message.Recipient,
                 message.Subject,
@@ -70,7 +73,7 @@ namespace MailSender
 
         private async Task<bool> ShouldSendAsync(Message message)
         {
-            switch (_options.SendMode)
+            switch (Options.SendMode)
             {
                 case SendModeOptions.LogOnly:
                     return false;
@@ -89,10 +92,10 @@ namespace MailSender
                 WriteIndented = true
             });
 
-            _logger.LogDebug("{message}", msgJson);
+            Logger.LogDebug("{message}", msgJson);
 
             var errorMessage = "Email failed to send: " + (await response.Content.ReadAsStringAsync());
-            _logger.LogError(errorMessage);
+            Logger.LogError(errorMessage);
 
             return errorMessage;
         }

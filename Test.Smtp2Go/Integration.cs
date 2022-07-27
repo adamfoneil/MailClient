@@ -23,7 +23,7 @@ namespace Smtp2GoTest
         public async Task Smtp2GoSampleEmail()
         {
             //using var httpClient = new HttpClient(new LoggingHandler());
-            var httpClient = Services.GetRequiredService<IHttpClientFactory>().CreateClient();
+            var httpClientFactory = Services.GetRequiredService<IHttpClientFactory>();
 
             var options = new Smtp2Go.Models.Options();
             Config.GetSection("Smtp2Go").Bind(options);
@@ -34,7 +34,7 @@ namespace Smtp2GoTest
                 config.SetMinimumLevel(LogLevel.Debug);
             }).CreateLogger<Smtp2GoSample>();
 
-            var client = new Smtp2GoSample(httpClient, logger, Options.Create(options));
+            var client = new Smtp2GoSample(httpClientFactory, logger, Options.Create(options));
 
             var messageId = await client.SendAsync(new Message()
             {

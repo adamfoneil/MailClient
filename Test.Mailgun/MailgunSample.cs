@@ -7,7 +7,7 @@ namespace MailgunTest
 {
     public class MailgunSample : MailgunClient
     {
-        public MailgunSample(HttpClient httpClient, ILogger<MailgunClient> logger, IOptions<Mailgun.Models.Options> options) : base(httpClient, logger, options)
+        public MailgunSample(IHttpClientFactory httpClientFactory, ILogger<MailgunClient> logger, IOptions<Mailgun.Models.Options> options) : base(httpClientFactory, logger, options)
         {
         }
 

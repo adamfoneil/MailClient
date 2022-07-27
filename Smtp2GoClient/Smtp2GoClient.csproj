@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>AO.Smtp2Go</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Company>Adam O'Neil</Company>
     <Description>An Smtp2Go email API client</Description>
     <Copyright>Copyright (c) 2022 Adam O'Neil</Copyright>
@@ -44,6 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
   </ItemGroup>

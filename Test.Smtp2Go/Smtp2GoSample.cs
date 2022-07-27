@@ -7,7 +7,7 @@ namespace Smtp2GoTest
 {
     public class Smtp2GoSample : Smtp2GoClient
     {
-        public Smtp2GoSample(HttpClient httpClient, ILogger<Smtp2GoSample> logger, IOptions<Smtp2Go.Models.Options> options) : base(httpClient, logger, options)
+        public Smtp2GoSample(IHttpClientFactory httpClientFactory, ILogger<Smtp2GoSample> logger, IOptions<Smtp2Go.Models.Options> options) : base(httpClientFactory, logger, options)
         {
         }
 

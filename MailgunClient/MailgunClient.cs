@@ -12,18 +12,20 @@ namespace Mailgun
     {
         private readonly HttpClient _httpClient;
 
-        public MailgunClient(HttpClient httpClient, ILogger<MailgunClient> logger, IOptions<Models.Options> options) : base(logger, options)
-        {
-            _httpClient = httpClient;
-            var encoded = Convert.ToBase64String(Encoding.ASCII.GetBytes($"api:{_options.ApiKey}"));
+        public MailgunClient(IHttpClientFactory httpClientFactory, ILogger<MailgunClient> logger, IOptions<Models.Options> options) : base(logger, options)
+        {            
+            _httpClient = httpClientFactory.CreateClient();
+            var encoded = Convert.ToBase64String(Encoding.ASCII.GetBytes($"api:{Options.ApiKey}"));
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", encoded);
         }
 
         protected override async Task<string> SendImplementationAsync(Message message)
         {
+            ArgumentNullException.ThrowIfNull(message, nameof(message));
+
             var body = new Dictionary<string, string>()
             {
-                ["from"] = _options.SenderName,
+                ["from"] = Options.SenderName,
                 ["to"] = message.Recipient,
                 ["subject"] = message.Subject,
                 ["text"] = message.TextBody,
@@ -40,7 +42,7 @@ namespace Mailgun
             var content = new MultipartFormDataContent();
             foreach (var kp in body.Where(kp => kp.Value is not null)) content.Add(new StringContent(kp.Value), kp.Key);
 
-            var url = $"{_options.Url}/{_options.Domain}/messages";
+            var url = $"{Options.Url}/{Options.Domain}/messages";
             var response = await _httpClient.PostAsync(url, content);
 
             if (response.IsSuccessStatusCode)

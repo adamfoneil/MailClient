@@ -1,5 +1,6 @@
 using MailClientBase.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -8,17 +9,21 @@ namespace MailgunTest
     [TestClass]
     public class Integration
     {
+        private static IServiceProvider Services => new ServiceCollection()
+            .AddHttpClient()
+            .BuildServiceProvider();
+
         [TestMethod]
         public async Task MailgunSampleEmail()
         {
-            using var httpClient = new HttpClient();
+            var httpClientFactory = Services.GetRequiredService<IHttpClientFactory>();
 
             var options = new Mailgun.Models.Options();
             Config.GetSection("Mailgun").Bind(options);
 
             var logger = LoggerFactory.Create(config => config.AddConsole()).CreateLogger<MailgunSample>();
 
-            var client = new MailgunSample(httpClient, logger, Options.Create(options));
+            var client = new MailgunSample(httpClientFactory, logger, Options.Create(options));
 
             var messageId = await client.SendAsync(new Message()
             {
