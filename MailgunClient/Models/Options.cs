@@ -1,8 +1,6 @@
-﻿using MailClientBase.Models;
-
-namespace Mailgun.Models
+﻿namespace Mailgun.Models
 {
-    public class Options : OptionsBase
+    public class Options
     {
         public string? Url { get; set; }
         public string? Domain { get; set; }

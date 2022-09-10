@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>AO.Mailgun</PackageId>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Authors>Adam O'Neil</Authors>
     <Description>A Mailgun email API client</Description>
     <Copyright>Copyright (c) 2022 Adam O'Neil</Copyright>
@@ -15,6 +15,7 @@
     <PackageTags>email; api-client</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>Streamlined some internals</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -28,7 +29,6 @@
   <ItemGroup>
     <Compile Include="..\MailClientBase\MailClientBase.cs" Link="Shared\MailClientBase.cs" />
     <Compile Include="..\MailClientBase\Models\Message.cs" Link="Shared\Models\Message.cs" />
-    <Compile Include="..\MailClientBase\Models\OptionsBase.cs" Link="Shared\Models\OptionsBase.cs" />
   </ItemGroup>
 
   <ItemGroup>

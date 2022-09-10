@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>AO.Smtp2Go</PackageId>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Company>Adam O'Neil</Company>
     <Description>An Smtp2Go email API client</Description>
     <Copyright>Copyright (c) 2022 Adam O'Neil</Copyright>
@@ -16,6 +16,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Authors>Adam O'Neil</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>Streamlined some internals</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -29,7 +30,6 @@
   <ItemGroup>
     <Compile Include="..\MailClientBase\MailClientBase.cs" Link="Shared\MailClientBase.cs" />
     <Compile Include="..\MailClientBase\Models\Message.cs" Link="Shared\Models\Message.cs" />
-    <Compile Include="..\MailClientBase\Models\OptionsBase.cs" Link="Shared\Models\OptionsBase.cs" />
   </ItemGroup>
 
   <ItemGroup>

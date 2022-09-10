@@ -31,11 +31,10 @@ namespace Mailgun
                 ["text"] = message.TextBody,
                 ["html"] = message.HtmlBody
             };
-
-            var replyTo = await GetReplyToAsync(message);
-            if (replyTo.AllowReplies)
+            
+            if (!string.IsNullOrWhiteSpace(message.ReplyTo))
             {
-                body.Add("h:reply-to", replyTo.Recipient);
+                body.Add("h:reply-to", message.ReplyTo);
             }
 
             // help from https://github.com/lukencode/FluentEmail/blob/master/src/Senders/FluentEmail.Mailgun/HttpHelpers/HttpClientHelpers.cs#L26

@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace MailSender
 {
-    public abstract class MailClientBase<TOptions> where TOptions : OptionsBase
+    public abstract class MailClientBase<TOptions> where TOptions : class
     {
         protected readonly ILogger Logger;
         protected readonly TOptions Options;
@@ -27,8 +27,7 @@ namespace MailSender
         {
             // for inspecting all outgoing content
             Logger.LogDebug("{@logData}", new
-            {
-                Options.SendMode,
+            {                
                 messageId,
                 message.Recipient,
                 message.Subject,
@@ -42,8 +41,7 @@ namespace MailSender
 
             // for inspecting just the top level info (sender, recipient, subject)
             Logger.LogInformation("{@logData}", new
-            {
-                Options.SendMode,
+            {                
                 messageId,
                 message.Recipient,
                 message.Subject,
@@ -59,30 +57,11 @@ namespace MailSender
         {
             ArgumentNullException.ThrowIfNull(message);
 
-            string messageId = string.Empty;
-
-            if (await ShouldSendAsync(message))
-            {
-                messageId = await SendImplementationAsync(message);
-            }
+            string messageId = await SendImplementationAsync(message);
 
             await LogMessageAsync(messageId, message);
 
             return messageId;
-        }
-
-        private async Task<bool> ShouldSendAsync(Message message)
-        {
-            switch (Options.SendMode)
-            {
-                case SendModeOptions.LogOnly:
-                    return false;
-
-                case SendModeOptions.Filter:
-                    return await FilterMessageAsync(message);
-            }
-
-            return true;
         }
 
         protected async Task<string> LogSendErrorAsync(HttpResponseMessage response, Message message)
