@@ -12,7 +12,7 @@ I offer these as NuGet packages:
 ## In a Nutshell
 All mail clients inherit from [MailClientBase\<TOptions\>](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L7). Use `TOptions` to define the settings required for that client. Examples: [Mailgun Options](https://github.com/adamfoneil/MailClient/blob/master/MailgunClient/Models/Options.cs), [Smtp2Go Options](https://github.com/adamfoneil/MailClient/blob/master/Smtp2GoClient/Models/Options.cs).
 
-For the two email providers in this repo I'm implementing, I overrode the abstract method [SendImplementationAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L52).
+For the two email providers in this repo I'm implementing, I overrode the abstract method [SendImplementationAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L54).
 
 If you want to take advantage of some optional functionality, you'll need to create your own subclass of `MailgunClient` or `Smtp2GoClient`. These are the optional overrides:
 - If you want to allow replies to your messages, override [GetReplyToAsync](https://github.com/adamfoneil/MailClient/blob/master/MailClientBase/MailClientBase.cs#L19). By default, replies are not allowed.
