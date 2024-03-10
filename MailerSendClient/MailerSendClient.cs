@@ -17,9 +17,9 @@ public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<Mail
     protected override async Task<string> SendImplementationAsync(Message message)
     {
         // prevent Too Many Requests
-        await Task.Delay(1000);
+        await Task.Delay(Options.SendDelayMS);
 
-        var client = HttpClientFactory?.CreateClient() ?? throw new Exception("http client factory required");
+        var client = HttpClientFactory.CreateClient();
 
         var request = SendRequest.FromMessage(message, Options.SenderEmail);
 
