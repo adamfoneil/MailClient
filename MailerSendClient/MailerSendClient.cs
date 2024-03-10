@@ -1,5 +1,5 @@
-﻿using MailClientBase.Models;
-using MailSender;
+﻿using EmailAbstractions;
+using EmailAbstractions.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
@@ -39,7 +39,8 @@ public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<Mail
             return values.First();
         }
 
-        return ClientCommunicator.UnknownMessageId;
+        // sometimes the msgId is not returned even though the message sent
+        return $"fake:{Guid.NewGuid()}";
     }
 
     private static JsonSerializerOptions SerializerOptions => new()

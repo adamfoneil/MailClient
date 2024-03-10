@@ -1,4 +1,4 @@
-﻿namespace MailClientBase.Models;
+﻿namespace EmailAbstractions.Models;
 
 public class Message
 {

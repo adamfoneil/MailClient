@@ -1,5 +1,5 @@
-﻿using MailClientBase.Models;
-using MailSender;
+﻿using EmailAbstractions;
+using EmailAbstractions.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
@@ -25,11 +25,11 @@ namespace Mailgun
 
             var body = new Dictionary<string, string>()
             {
-                ["from"] = Options.SenderName,
-                ["to"] = message.Recipient,
-                ["subject"] = message.Subject,
-                ["text"] = message.TextBody,
-                ["html"] = message.HtmlBody
+                ["from"] = Options.SenderName ?? throw new Exception("Sender name is required"),
+                ["to"] = message.Recipient ?? throw new Exception("Recipient is required"),
+                ["subject"] = message.Subject ?? throw new Exception("Subject is required"),
+                ["text"] = message.TextBody ?? message.HtmlBody ?? throw new Exception("Message body is required"),
+                ["html"] = message.HtmlBody ?? message.TextBody ?? throw new Exception("Message body is required")
             };
             
             if (!string.IsNullOrWhiteSpace(message.ReplyTo))

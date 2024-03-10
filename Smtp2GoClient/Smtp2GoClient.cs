@@ -1,5 +1,5 @@
-﻿using MailClientBase.Models;
-using MailSender;
+﻿using EmailAbstractions;
+using EmailAbstractions.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text;

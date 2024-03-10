@@ -1,4 +1,4 @@
-﻿using MailClientBase.Models;
+﻿using EmailAbstractions.Models;
 using Mailgun;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

@@ -1,4 +1,4 @@
-﻿using MailClientBase.Models;
+﻿using EmailAbstractions.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Smtp2Go;
