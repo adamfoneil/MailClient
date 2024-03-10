@@ -27,6 +27,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\MailClientBase\IEmailClient.cs" Link="Shared\IEmailClient.cs" />
     <Compile Include="..\MailClientBase\MailClientBase.cs" Link="Shared\MailClientBase.cs" />
     <Compile Include="..\MailClientBase\Models\Message.cs" Link="Shared\Models\Message.cs" />
   </ItemGroup>

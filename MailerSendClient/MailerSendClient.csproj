@@ -5,9 +5,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UserSecretsId>c4cdaf85-4d12-4027-9bd0-e5949ad23cff</UserSecretsId>
+    <PackageId>AIO.MailerSend.Email</PackageId>
+    <Title>MailerSend Email Client</Title>
+    <Version>1.0.1</Version>
+    <Authors>Adam O'Neil</Authors>
+    <Copyright>Copyright (c) 2024 Adam O'Neil</Copyright>
+    <Description>MailerSend Email Client</Description>
+    <PackageProjectUrl>https://github.com/adamfoneil/MailClient</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/adamfoneil/MailClient</RepositoryUrl>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\MailClientBase\IEmailClient.cs" Link="Shared\IEmailClient.cs" />
     <Compile Include="..\MailClientBase\MailClientBase.cs" Link="Shared\MailClientBase.cs" />
     <Compile Include="..\MailClientBase\Models\Message.cs" Link="Shared\Models\Message.cs" />
   </ItemGroup>

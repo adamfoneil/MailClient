@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace EmailAbstractions;
 
-public abstract class MailClientBase<TOptions> where TOptions : class
+public abstract class MailClientBase<TOptions> : IEmailClient where TOptions : class
 {
     protected readonly ILogger Logger;
     protected readonly TOptions Options;
