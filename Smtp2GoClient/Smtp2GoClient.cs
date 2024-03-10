@@ -9,14 +9,9 @@ using System.Text.Json.Serialization;
 
 namespace Smtp2Go
 {
-    public class Smtp2GoClient : MailClientBase<Models.Options>
+    public class Smtp2GoClient(IHttpClientFactory httpClientFactory, ILogger<Smtp2GoClient> logger, IOptions<Models.Options> options) : MailClientBase<Models.Options>(logger, options)
     {
-        private readonly HttpClient _httpClient;
-
-        public Smtp2GoClient(IHttpClientFactory httpClientFactory, ILogger<Smtp2GoClient> logger, IOptions<Models.Options> options) : base(logger, options)
-        {
-            _httpClient = httpClientFactory.CreateClient();            
-        }
+        private readonly HttpClient _httpClient = httpClientFactory.CreateClient();
 
         protected override async Task<string> SendImplementationAsync(Message message)
         {
@@ -59,7 +54,7 @@ namespace Smtp2Go
             var envelope = new Envelope()
             {
                 ApiKey = options.ApiKey,
-                Recipients = new[] { new Recipient() { Email = message.Recipient } },
+                Recipients = [new Recipient() { Email = message.Recipient }],
                 Subject = message.Subject,
                 Sender = options.Sender,
                 TextBody = message.TextBody,
