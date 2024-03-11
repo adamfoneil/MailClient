@@ -67,7 +67,7 @@ public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<Mail
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Text { get; set; } = default!;
         [JsonPropertyName("html")]
-        public string Html { get; set; } = default!;
+        public string? Html { get; set; } = default!;
 
         internal static SendRequest FromMessage(Message message, string sender)
         {
@@ -83,7 +83,7 @@ public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<Mail
                     }
                 ],
                 Subject = message.Subject ?? throw new ArgumentNullException(nameof(Subject)),
-                Html = message.HtmlBody ?? throw new ArgumentNullException(nameof(Html)),
+                Html = message.HtmlBody,
                 Text = message.TextBody
             };
 
