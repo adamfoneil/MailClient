@@ -12,108 +12,108 @@ namespace MailerSend;
 
 public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<MailerSendClient> logger, IOptions<MailerSendOptions> options) : MailClientBase<MailerSendOptions>(logger, options)
 {    
-    private readonly IHttpClientFactory HttpClientFactory = httpClientFactory;
+	private readonly IHttpClientFactory HttpClientFactory = httpClientFactory;
 
-    protected override async Task<string> SendImplementationAsync(Message message)
-    {
-        // prevent Too Many Requests
-        await Task.Delay(Options.SendDelayMS);
-
-        var client = HttpClientFactory.CreateClient();
-
-        var request = SendEmailRequest.FromMessage(message, Options.SenderEmail);
-
-        client.DefaultRequestHeaders.Clear();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Options.ApiKey);
-
-        var response = await client.PostAsync(
-               new Uri(Options.Url + "/email"),
-               JsonContent.Create(request, options: SerializerOptions));
-
-        response.EnsureSuccessStatusCode();
-
-        if (response.Headers.TryGetValues("X-Message-Id", out var values))
-        {
-            return values.First();
-        }
-
-        // sometimes the msgId is not returned even though the message sent
-        return $"fake:{Guid.NewGuid()}";
-    }
-
-    public async Task<string> SendTextAsync(string toNumber, string content)
-    {
+	protected override async Task<string> SendImplementationAsync(Message message)
+	{
 		// prevent Too Many Requests
 		await Task.Delay(Options.SendDelayMS);
 
-        throw new NotImplementedException();
+		var client = HttpClientFactory.CreateClient();
+
+		var request = SendEmailRequest.FromMessage(message, Options.SenderEmail);
+
+		client.DefaultRequestHeaders.Clear();
+		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Options.ApiKey);
+
+		var response = await client.PostAsync(
+			   new Uri(Options.Url + "/email"),
+			   JsonContent.Create(request, options: SerializerOptions));
+
+		response.EnsureSuccessStatusCode();
+
+		if (response.Headers.TryGetValues("X-Message-Id", out var values))
+		{
+			return values.First();
+		}
+
+		// sometimes the msgId is not returned even though the message sent
+		return $"fake:{Guid.NewGuid()}";
+	}
+
+	public async Task<string> SendTextAsync(string toNumber, string content)
+	{
+		// prevent Too Many Requests
+		await Task.Delay(Options.SendDelayMS);
+
+		throw new NotImplementedException();
 	}
 
 	private static JsonSerializerOptions SerializerOptions => new()
-    {
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, // to allow inline html in HtmlBody
-        WriteIndented = true
-    };
+	{
+		Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, // to allow inline html in HtmlBody
+		WriteIndented = true
+	};
 
-    /// <summary>
-    /// based on https://developers.mailersend.com/api/v1/email.html#send-an-email
-    /// </summary>
-    internal class SendEmailRequest
-    {
-        [JsonPropertyName("from")]
-        public Recipient From { get; set; } = new();
-        [JsonPropertyName("to")]
-        public Recipient[] To { get; set; } = [];
-        [JsonPropertyName("reply_to")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Recipient? ReplyTo { get; set; }
-        [JsonPropertyName("subject")]
-        public string Subject { get; set; } = default!;
-        [JsonPropertyName("text")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string? Text { get; set; } = default!;
-        [JsonPropertyName("html")]
-        public string? Html { get; set; } = default!;
+	/// <summary>
+	/// based on https://developers.mailersend.com/api/v1/email.html#send-an-email
+	/// </summary>
+	internal class SendEmailRequest
+	{
+		[JsonPropertyName("from")]
+		public Recipient From { get; set; } = new();
+		[JsonPropertyName("to")]
+		public Recipient[] To { get; set; } = [];
+		[JsonPropertyName("reply_to")]
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		public Recipient? ReplyTo { get; set; }
+		[JsonPropertyName("subject")]
+		public string Subject { get; set; } = default!;
+		[JsonPropertyName("text")]
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		public string? Text { get; set; } = default!;
+		[JsonPropertyName("html")]
+		public string? Html { get; set; } = default!;
 
-        internal static SendEmailRequest FromMessage(Message message, string sender)
-        {
-            var result = new SendEmailRequest()
-            {
-                From = new() { Email = sender, Name = sender },
-                To =
-                [
-                    new()
-                    {
-                        Email = message.Recipient ?? throw new ArgumentNullException(nameof(Recipient)),
-                        Name = message.Recipient
-                    }
-                ],
-                Subject = message.Subject ?? throw new ArgumentNullException(nameof(Subject)),
-                Html = message.HtmlBody,
-                Text = message.TextBody
-            };
+		internal static SendEmailRequest FromMessage(Message message, string sender)
+		{
+			var result = new SendEmailRequest()
+			{
+				From = new() { Email = sender, Name = sender },
+				To =
+				[
+					new()
+					{
+						Email = message.Recipient ?? throw new ArgumentNullException(nameof(Recipient)),
+						Name = message.Recipient
+					}
+				],
+				Subject = message.Subject ?? throw new ArgumentNullException(nameof(Subject)),
+				Html = message.HtmlBody,
+				Text = message.TextBody
+			};
 
-            if (message.ReplyTo != null) result.ReplyTo = new() { Email = message.ReplyTo };
+			if (message.ReplyTo != null) result.ReplyTo = new() { Email = message.ReplyTo };
 
-            return result;
-        }
-    }
+			return result;
+		}
+	}
 
-    internal class SendTextRequest
-    {
-        [JsonPropertyName("from")]
-        public string From { get; set; } = default!;
-        [JsonPropertyName("to")]
-        public string[] To { get; set; } = [];
-        [JsonPropertyName("text")]
-        public required string Text { get; set; } = default!;
-    }
+	internal class SendTextRequest
+	{
+		[JsonPropertyName("from")]
+		public string From { get; set; } = default!;
+		[JsonPropertyName("to")]
+		public string[] To { get; set; } = [];
+		[JsonPropertyName("text")]
+		public required string Text { get; set; } = default!;
+	}
 
-    internal class Recipient
-    {
-        [JsonPropertyName("email")]
-        public string Email { get; set; } = default!;
-        [JsonPropertyName("name")]
-        public string Name { get; set; } = default!;
-    }
+	internal class Recipient
+	{
+		[JsonPropertyName("email")]
+		public string Email { get; set; } = default!;
+		[JsonPropertyName("name")]
+		public string Name { get; set; } = default!;
+	}
 }
