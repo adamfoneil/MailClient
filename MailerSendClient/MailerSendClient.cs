@@ -11,42 +11,39 @@ using System.Text.Json.Serialization;
 namespace MailerSend;
 
 public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<MailerSendClient> logger, IOptions<MailerSendOptions> options) : MailClientBase<MailerSendOptions>(logger, options)
-{    
+{
 	private readonly IHttpClientFactory HttpClientFactory = httpClientFactory;
 
-	protected override async Task<string> SendImplementationAsync(Message message)
+	protected override async Task<string> SendImplementationAsync(Message message) =>
+		await SendInnerAsync("/email", "X-Message-Id", SendEmailRequest.FromMessage(message, Options.SenderEmail));
+
+	public async Task<string> SendTextAsync(string toNumber, string content) =>
+		await SendInnerAsync("/sms", "X-SMS-Message-Id", new SendTextRequest() { From = Options.SenderPhone, Text = content, To = [toNumber] });
+
+	private async Task<string> SendInnerAsync<TRequest>(string endpoint, string headerId, TRequest request)
 	{
 		// prevent Too Many Requests
 		await Task.Delay(Options.SendDelayMS);
 
 		var client = HttpClientFactory.CreateClient();
-
-		var request = SendEmailRequest.FromMessage(message, Options.SenderEmail);
-
 		client.DefaultRequestHeaders.Clear();
 		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Options.ApiKey);
 
 		var response = await client.PostAsync(
-			   new Uri(Options.Url + "/email"),
+			   new Uri(Options.Url + endpoint),
 			   JsonContent.Create(request, options: SerializerOptions));
+
+		//var responseContent = await response.Content.ReadAsStringAsync();
 
 		response.EnsureSuccessStatusCode();
 
-		if (response.Headers.TryGetValues("X-Message-Id", out var values))
+		if (response.Headers.TryGetValues(headerId, out var values))
 		{
 			return values.First();
 		}
 
 		// sometimes the msgId is not returned even though the message sent
 		return $"fake:{Guid.NewGuid()}";
-	}
-
-	public async Task<string> SendTextAsync(string toNumber, string content)
-	{
-		// prevent Too Many Requests
-		await Task.Delay(Options.SendDelayMS);
-
-		throw new NotImplementedException();
 	}
 
 	private static JsonSerializerOptions SerializerOptions => new()
@@ -107,6 +104,17 @@ public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<Mail
 		public string[] To { get; set; } = [];
 		[JsonPropertyName("text")]
 		public required string Text { get; set; } = default!;
+		/*
+		[JsonPropertyName("persoonalization")]
+		public PersonalizationInfo[] Personalization { get; set; } = [];
+
+		public class PersonalizationInfo
+		{
+			[JsonPropertyName("phone_number")]
+			public string PhoneNumber { get; set; } = default!;
+			[JsonPropertyName("data")]
+			public Dictionary<string, object> Data { get; set; } = [];
+		}*/
 	}
 
 	internal class Recipient

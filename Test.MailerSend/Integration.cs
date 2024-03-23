@@ -19,7 +19,7 @@ namespace MailerSendTest
 			.Build();
 
 		[TestMethod]
-		public async Task Send()
+		public async Task SendEmail()
 		{
 			var httpClientFactory = Services.GetRequiredService<IHttpClientFactory>();
 
@@ -43,6 +43,25 @@ namespace MailerSendTest
 			});
 
 			Assert.IsTrue(!string.IsNullOrEmpty(messageId));
+		}
+
+		[TestMethod]
+		public async Task SendText()
+		{
+			var httpClientFactory = Services.GetRequiredService<IHttpClientFactory>();
+
+			var options = new MailerSendOptions();
+			Config.GetSection("MailerSend").Bind(options);
+
+			var logger = LoggerFactory.Create(config =>
+			{
+				//config.AddConsole();
+				config.SetMinimumLevel(LogLevel.Debug);
+			}).CreateLogger<MailerSendClient>();
+
+			var client = new MailerSendClient(httpClientFactory, logger, Options.Create(options));
+
+			await client.SendTextAsync("+18643734637", "Sample text from MailerSend integration test");
 		}
 	}
 }
