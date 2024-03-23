@@ -3,7 +3,7 @@ using EmailAbstractions.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
-using System.Text;
+using System.Net.Http.Json;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -21,16 +21,14 @@ public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<Mail
 
         var client = HttpClientFactory.CreateClient();
 
-        var request = SendRequest.FromMessage(message, Options.SenderEmail);
-
-        var json = JsonSerializer.Serialize(request, SerializerOptions);
+        var request = SendEmailRequest.FromMessage(message, Options.SenderEmail);
 
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Options.ApiKey);
 
         var response = await client.PostAsync(
                new Uri(Options.Url + "/email"),
-               new StringContent(json, Encoding.UTF8, "application/json"));
+               JsonContent.Create(request, options: SerializerOptions));
 
         response.EnsureSuccessStatusCode();
 
@@ -43,7 +41,15 @@ public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<Mail
         return $"fake:{Guid.NewGuid()}";
     }
 
-    private static JsonSerializerOptions SerializerOptions => new()
+    public async Task<string> SendTextAsync(string toNumber, string content)
+    {
+		// prevent Too Many Requests
+		await Task.Delay(Options.SendDelayMS);
+
+        throw new NotImplementedException();
+	}
+
+	private static JsonSerializerOptions SerializerOptions => new()
     {
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, // to allow inline html in HtmlBody
         WriteIndented = true
@@ -52,7 +58,7 @@ public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<Mail
     /// <summary>
     /// based on https://developers.mailersend.com/api/v1/email.html#send-an-email
     /// </summary>
-    internal class SendRequest
+    internal class SendEmailRequest
     {
         [JsonPropertyName("from")]
         public Recipient From { get; set; } = new();
@@ -69,9 +75,9 @@ public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<Mail
         [JsonPropertyName("html")]
         public string? Html { get; set; } = default!;
 
-        internal static SendRequest FromMessage(Message message, string sender)
+        internal static SendEmailRequest FromMessage(Message message, string sender)
         {
-            var result = new SendRequest()
+            var result = new SendEmailRequest()
             {
                 From = new() { Email = sender, Name = sender },
                 To =
@@ -91,6 +97,16 @@ public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<Mail
 
             return result;
         }
+    }
+
+    internal class SendTextRequest
+    {
+        [JsonPropertyName("from")]
+        public string From { get; set; } = default!;
+        [JsonPropertyName("to")]
+        public string[] To { get; set; } = [];
+        [JsonPropertyName("text")]
+        public required string Text { get; set; } = default!;
     }
 
     internal class Recipient
