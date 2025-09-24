@@ -33,9 +33,12 @@ public class MailerSendClient(IHttpClientFactory httpClientFactory, ILogger<Mail
 			   new Uri(Options.Url + endpoint),
 			   JsonContent.Create(request, options: SerializerOptions));
 
-		//var responseContent = await response.Content.ReadAsStringAsync();
-
-		response.EnsureSuccessStatusCode();
+		if (!response.IsSuccessStatusCode)
+		{
+			var errorContent = await response.Content.ReadAsStringAsync();
+			Logger.LogError("Failed to send request to {Endpoint}. Status: {StatusCode}. Response: {ErrorContent}", endpoint, response.StatusCode, errorContent);
+			throw new HttpRequestException($"Request failed with status {response.StatusCode}: {errorContent}");
+		}
 
 		if (response.Headers.TryGetValues(headerId, out var values))
 		{
